@@ -1,0 +1,40 @@
+site_name: Real Time Litex Extension
+repo_name: disdi/clic-in-litex
+repo_url: https://github.com/disdi/clic-in-litex
+site_url: https://saketsinha.de/clic-in-litex/
+copyright: sake sinha
+
+nav:
+    - Home: index.md
+    - Getting Started: nav/getting-started.md
+    - Architecture:
+      - nav/architecture/overview.md
+    - Development:
+      - nav/development/development-guide.md
+
+theme:
+  name: material
+  favicon: assets/favicon.ico
+  logo: assets/logo.png
+  theme_style: light
+  site_name_style: bold
+  title_style: bold
+  sidebar: true
+  navigation_depth: 2
+  highlightjs: true
+    - yaml
+    - python
+  colors:
+    text: black
+    title: black
+    primary: black
+    background: white
+  components:
+    site_name: true
+    title: false
+    menu: true
+    preview: true
+    footer: true
+
+extra_javascript:
+ - assets/custom.js
