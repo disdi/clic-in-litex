@@ -27,11 +27,14 @@ The basic RISC-V interrupt architecture defined in the RISC-V privileged specifi
 2. **Minerva CPU Updates** (`litex/soc/cores/cpu/minerva/core.py`):
     - Added CLINT interrupt support to Minerva CPU.
 
-3. **SoCCore Support** (`litex/soc/integration/soc_core.py`):
+3. **Ibex CPU Updates** (`litex/soc/cores/cpu/ibex/core.py`):
+    - Added CLINT interrupt support to Ibex CPU.
+
+4. **SoCCore Support** (`litex/soc/integration/soc_core.py`):
     - Added CLINT parameters (`--with-clint`).
     - CLINT instantiation for compatible CPUs.
 
-4. **Software Support** (`litex/soc/cores/cpu/minerva/irq.h`):
+5. **Software Support** (`litex/soc/cores/cpu/minerva/irq.h`/`litex/soc/cores/cpu/ibex/irq.h`):
     - C functions for CLINT configuration and control.
 
 The implementation of the CLINT design is compliant with both the older SiFive CLINT design and the newer [RISC-V ACLINT specification](https://github.com/riscvarchive/riscv-aclint).
@@ -53,16 +56,21 @@ An advanced interrupt controller that provides enhanced features for real-time a
     - Automatic CLIC instantiation when CPU has CLIC support.
     - Defined CLIC memory address region.
 
-3. **SoC Integration** (`litex/soc/integration/soc.py`):
+3. **Ibex CPU Updates** (`litex/soc/cores/cpu/ibex/core.py`):
+    - Added CLIC interrupt signals (interrupt request, ID, priority).
+    - Automatic CLIC instantiation when CPU has CLIC support.
+    - Defined CLIC memory address region.
+
+4. **SoC Integration** (`litex/soc/integration/soc.py`):
     - Added `add_clic()` method for easy CLIC integration.
     - Automatic connection of interrupt sources to CLIC inputs.
     - CSR mapping for CLIC configuration.
 
-4. **SoCCore Support** (`litex/soc/integration/soc_core.py`):
+5. **SoCCore Support** (`litex/soc/integration/soc_core.py`):
     - Added CLIC parameters (`--with-clic`, `--clic-num-interrupts`, `--clic-ipriolen`).
     - CLIC instantiation for compatible CPUs.
 
-5. **Software Support** (`litex/soc/cores/cpu/minerva/irq.h`):
+6. **Software Support** (`litex/soc/cores/cpu/minerva/irq.h`/`litex/soc/cores/cpu/ibex/irq.h`):
     - C functions for CLIC configuration and control.
     - Interrupt enable/disable, priority setting, attribute configuration.
     - Support for first 16 interrupts via direct CSR access.
