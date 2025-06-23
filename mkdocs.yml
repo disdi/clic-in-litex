@@ -2,7 +2,7 @@ site_name: Real Time Litex Extension
 repo_name: disdi/clic-in-litex
 repo_url: https://github.com/disdi/clic-in-litex
 site_url: https://saketsinha.de/clic-in-litex/
-copyright: sake sinha
+copyright: saket sinha
 
 nav:
     - Home: index.md
