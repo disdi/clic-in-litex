@@ -7,9 +7,40 @@
 
 ### Key Changes
 
-There are two Interrupt Controller Implementations that have been added to Litex SOC framework which enables LiteX-based RISC-V SoCs to choose between:
+There are two Interrupt Controller Implementations that have been added to Litex SOC framework which enables LiteX-based RISC-V SoCs to choose between CLINT and CLIC.
 
-#### CLINT 
+Both controllers expose standardized signals for integration:
+
+- **CLINT:**  
+    - `timer_interrupt`
+    - `software_interrupt`
+
+- **CLIC:**  
+    - `clic_interrupt`
+    - `clic_interrupt_id`
+    - `clic_interrupt_priority`
+
+#### Required Signals for Integration
+
+The CPU Integration Pattern is same and could be applied to all CPUs supported by Litex. Current implementation supports VexRiscv, Ibex and Minerva.
+Each CPU should declare support through consistent signal interfaces as shown below :
+
+**CLINT Signals:**
+```python
+self.timer_interrupt = Signal()
+self.software_interrupt = Signal()
+```
+
+**CLIC Signals:**
+```python
+self.clic_interrupt         = Signal()
+self.clic_interrupt_id      = Signal(12)
+self.clic_interrupt_priority = Signal(8)
+```
+These signals must be implemented in the CPU core to interface with the respective interrupt controllers.
+
+
+### CLINT Integration in Litex
 
 The basic RISC-V interrupt architecture defined in the RISC-V privileged specification, using CSRs (Control and Status Registers) like mie and mip for interrupt management.
 
@@ -42,7 +73,7 @@ The basic RISC-V interrupt architecture defined in the RISC-V privileged specifi
 
 The implementation of the CLINT design is compliant with both the older SiFive CLINT design and the newer [RISC-V ACLINT specification](https://github.com/riscvarchive/riscv-aclint).
 
-#### CLIC 
+### CLIC Integration in Litex
 
 An advanced interrupt controller that provides enhanced features for real-time applications.
 
