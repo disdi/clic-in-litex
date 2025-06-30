@@ -68,8 +68,9 @@ The basic RISC-V interrupt architecture defined in the RISC-V privileged specifi
     - Added CLINT parameters (`--with-clint`).
     - CLINT instantiation for compatible CPUs.
 
-6. **Software Support** (`.../irq.h`):
-    - C functions for CLINT configuration and control.
+6. **Software Support** (`.../irq.h`, `.../clint.h`):
+    - Generic Interrupt Service Routines (ISRs) to handle timer and software interrupts.
+    - C functions for CLINT configuration and control provided via `clint.h`.
 
 The implementation of the CLINT design is compliant with both the older SiFive CLINT design and the newer [RISC-V ACLINT specification](https://github.com/riscvarchive/riscv-aclint).
 
@@ -107,8 +108,9 @@ An advanced interrupt controller that provides enhanced features for real-time a
     - Added CLIC parameters (`--with-clic`, `--clic-num-interrupts`, `--clic-ipriolen`).
     - CLIC instantiation for compatible CPUs.
 
-7. **Software Support** (`.../irq.h`):
-    - C functions for CLIC configuration and control.
+7. **Software Support** (`.../irq.h`, `.../clic.h`):
+    - Generic Interrupt Service Routines (ISRs) to handle prioritized, external interrupts.
+    - C functions for CLIC configuration and control provided via `clic.h`.
     - Interrupt enable/disable, priority setting, attribute configuration.
     - Support for first 16 interrupts via direct CSR access.
 
@@ -127,3 +129,10 @@ Some other features from the specification can be added later and currently not 
   - No CLIC vector table mode (mtvec.mode=11)
   - No interrupt claiming protocol
   - Missing several CLIC extensions (Smclicsehv, Sditrig, Smtp, Smcspsw)
+
+### Demonstrations
+
+Two new demo applications are included to showcase how to use the CLINT and CLIC from C code. These demos illustrate features like:
+- Software interrupts
+- Priority-based preemption
+- Different interrupt trigger modes (edge/level)
