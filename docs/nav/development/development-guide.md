@@ -1,11 +1,11 @@
-# Development guide
+# Milestones
 
-## HW Implementation
+## Implementation
 
 [PR #2260: Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
 
 
-### Key Changes
+### Hardware Changes
 
 There are two Interrupt Controller Implementations that have been added to Litex SOC framework which enables LiteX-based RISC-V SoCs to choose between CLINT and CLIC.
 
@@ -20,27 +20,7 @@ Both controllers expose standardized signals for integration:
     - `clic_interrupt_id`
     - `clic_interrupt_priority`
 
-#### Required Signals for Integration
-
-The CPU Integration Pattern is same and could be applied to all CPUs supported by Litex. Current implementation supports VexRiscv, Ibex and Minerva.
-Each CPU should declare support through consistent signal interfaces as shown below :
-
-**CLINT Signals:**
-```python
-self.timer_interrupt = Signal()
-self.software_interrupt = Signal()
-```
-
-**CLIC Signals:**
-```python
-self.clic_interrupt         = Signal()
-self.clic_interrupt_id      = Signal(12)
-self.clic_interrupt_priority = Signal(8)
-```
-These signals must be implemented in the CPU core to interface with the respective interrupt controllers.
-
-
-### CLINT Integration in Litex
+#### CLINT Hardware Integration in Litex
 
 The basic RISC-V interrupt architecture defined in the RISC-V privileged specification, using CSRs (Control and Status Registers) like mie and mip for interrupt management.
 
@@ -74,7 +54,7 @@ The basic RISC-V interrupt architecture defined in the RISC-V privileged specifi
 
 The implementation of the CLINT design is compliant with both the older SiFive CLINT design and the newer [RISC-V ACLINT specification](https://github.com/riscvarchive/riscv-aclint).
 
-### CLIC Integration in Litex
+#### CLIC Hardware Integration in Litex
 
 An advanced interrupt controller that provides enhanced features for real-time applications.
 
@@ -108,31 +88,32 @@ An advanced interrupt controller that provides enhanced features for real-time a
     - Added CLIC parameters (`--with-clic`, `--clic-num-interrupts`, `--clic-ipriolen`).
     - CLIC instantiation for compatible CPUs.
 
-7. **Software Support** (`.../irq.h`, `.../clic.h`):
-    - Generic Interrupt Service Routines (ISRs) to handle prioritized, external interrupts.
-    - C functions for CLIC configuration and control provided via `clic.h`.
-    - Interrupt enable/disable, priority setting, attribute configuration.
-    - Support for first 16 interrupts via direct CSR access.
 
 
-The CLIC implementation is compliant with the [RISC-V Fast Interrupts (CLIC) specification](https://github.com/riscv/riscv-fast-interrupt) as listed below:
 
-  - 64 local interrupts with individual control (clicintattr, clicintip, clicintie, cliciprio)
-  - Priority-based arbitration with 8-bit priority levels
-  - mithreshold CSR for interrupt filtering
-  - Vectored interrupt mode support in mtvec
-  - Trigger type configuration for edge/level detection
+### Software Changes
 
-Some other features from the specification can be added later and currently not supported:
+The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RISC-V SoCs can be accessed via software.
 
-  - No nested preemption support (missing context preservation)
-  - No CLIC vector table mode (mtvec.mode=11)
-  - No interrupt claiming protocol
-  - Missing several CLIC extensions (Smclicsehv, Sditrig, Smtp, Smcspsw)
+### CLINT Software Integration in Litex
 
-### Demonstrations
+1. **Software Driver** (`.../irq.h`, `.../clint.h`):
+    - Provides generic Interrupt Service Routines (ISRs) for handling timer and software interrupts.
+    - Includes C functions for configuring and controlling the CLINT via `clint.h`.
 
-Two new demo applications are included to showcase how to use the CLINT and CLIC from C code. These demos illustrate features like:
-- Software interrupts
-- Priority-based preemption
-- Different interrupt trigger modes (edge/level)
+2. **Software Demo Application** (`clint_demo.c`):
+    - Demonstrates triggering and handling software interrupts using the CLINT.
+    - Offers a practical example of utilizing the CLINT C API.
+
+### CLIC Software Integration in Litex
+
+1. **Software Driver** (`.../irq.h`, `.../clic.h`):
+    - Implements generic ISRs for managing prioritized external interrupts.
+    - Supplies C functions for configuring and controlling the CLIC via `clic.h`.
+    - Features interrupt enable/disable, priority configuration, and attribute settings.
+    - Supports direct CSR access for the first 16 interrupts.
+
+2. **Software Demo Application** (`clic_demo.c`):
+    - Highlights advanced interrupt capabilities of the CLIC.
+    - Includes tests for priority-based preemption, interrupt thresholding, and edge/level-triggered modes.
+    - Serves as a detailed example of using the CLIC C API effectively.
