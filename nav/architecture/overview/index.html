@@ -311,6 +311,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -322,6 +335,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture Diagram
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -446,6 +487,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture Diagram
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -465,114 +523,73 @@
 
 <h1 id="overview">Overview</h1>
 <p>This diagram shows how PLIC handles external interrupt distribution while CLIC provides advanced local interrupt management, creating a comprehensive interrupt handling solution for the Litex SOC.</p>
-<pre><code class="language-bash">  ┌───────────────────────────────────────────────────────────────────────────────────────┐
-  │                            Litex SOC with PLIC + CLIC                                 │
-  ├───────────────────────────────────────────────────────────────────────────────────────┤
-  │                                                                                       │
-  │  External Interrupt Sources                    Memory-Mapped I/O                      │
-  │  ┌─────────────────────────┐                   ┌─────────────────────────┐            │
-  │  │ interrupts[31:1]        │                   │  Wishbone Peripheral    │            │
-  │  │ • UART                  │                   │  Bus (30-bit addr)      │            │
-  │  │ • GPIO                  │                   │  ┌─────┬─────┬─────┐    │            │
-  │  │ • Ethernet              │                   │  │UART │GPIO │Timer│    │            │
-  │  │ • DMA                   │                   │  │     │     │     │    │            │
-  │  │ • ...                   │                   │  └─────┴─────┴─────┘    │            │
-  │  └─────────────┬───────────┘                   └─────────────────────────┘            │
-  │                │                                                                      │
-  │                ▼                                                                      │
-  │  ┌────────────────────────────────────────────────────────────────────────────────┐   │
-  │  │                              PLIC (Platform-Level Interrupt Controller)        │   │
-  │  │  ┌─────────────┐    ┌─────────────────┐    ┌────────────────────────────────┐  │   │
-  │  │  │   Gateway   │    │   Priority      │    │        Targets                 │  │   │
-  │  │  │   Logic     │    │   Arbitration   │    │  ┌──────────┬──────────────┐   │  │   │
-  │  │  │             │    │                 │    │  │ Machine  │ Supervisor   │   │  │   │
-  │  │  │ Edge Detect │───▶│ Tree-based      │───▶│  │ Mode     │ Mode         │   │  │   │
-  │  │  │ &amp; Latching  │    │ Priority        │    │  │ Target   │ Target       │   │  │   │
-  │  │  │             │    │ Selection       │    │  └──────────┴──────────────┘   │  │   │
-  │  │  └─────────────┘    └─────────────────┘    └────────────┬───────────────────┘  │   │
-  │  │                                                         │                      │   │
-  │  │  Wishbone Interface (20-bit addr)                       │                      │   │
-  │  │  • Priority registers                                   │                      │   │
-  │  │  • Enable registers                                     │                      │   │
-  │  │  • Threshold registers                                  │                      │   │
-  │  │  • Claim/Complete registers                             │                      │   │
-  │  └─────────────────────────────────────────────────────────┼──────────────────────┘   │
-  │                                                            │                          │
-  │                                                            ▼                          │
-  │  ┌────────────────────────────────────────────────────────────────────────────────┐   │
-  │  │                        CLIC (Core Local Interrupt Controller)                  │   │
-  │  │                                                                                │   │
-  │  │  External Inputs from PLIC:          Local Interrupt Sources:                  │   │
-  │  │  ┌─────────────────────────┐          ┌─────────────────────────┐              │   │
-  │  │  │ • Machine External      │          │ • Timer Compare         │              │   │
-  │  │  │ • Supervisor External   │          │   (MTIMECMP vs MTIME)   │              │   │
-  │  │  │                         │          │ • Software Trigger      │              │   │
-  │  │  └────────────────────────┬┘          │   (MSIP register)       │              │   │
-  │  │                           │           └─────────────────────────┘              │   │
-  │  │                           ▼                         ▼                          │   │
-  │  │  ┌─────────────────────────────────────────────────────────────────────────┐   │   │
-  │  │  │                    Interrupt Processing Engine                          │   │   │
-  │  │  │                                                                         │   │   │
-  │  │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────────┐   │   │   │
-  │  │  │  │   Level      │  │   Priority   │  │        Vectoring             │   │   │   │
-  │  │  │  │  Comparison  │  │  Arbitration │  │                              │   │   │   │
-  │  │  │  │              │  │              │  │  • Interrupt ID Assignment   │   │   │   │
-  │  │  │  │ vs Threshold │  │ Nested Int.  │  │  • Handler Address Calc      │   │   │   │
-  │  │  │  │              │  │ Support      │  │  • Context Auto-save         │   │   │   │
-  │  │  │  └──────────────┘  └──────────────┘  └──────────────────────────────┘   │   │   │
-  │  │  └─────────────────────────────────────────────────────────────────────────┘   │   │
-  │  │                                                                                │   │
-  │  │  Wishbone Interface (14-bit addr):                                             │   │
-  │  │  • mintthresh, mtvt, mnxti CSRs                                                │   │
-  │  │  • Per-interrupt config/enable/pending                                         │   │
-  │  │  • Timer registers (MTIME/MTIMECMP)                                            │   │
-  │  └─────────────────────────────────────┬──────────────────────────────────────────┘   │
-  │                                        │                                              │
-  │                                        ▼                                              │
-  │  ┌────────────────────────────────────────────────────────────────────────────────┐   │
-  │  │                              VexRiscv CPU Core                                 │   │
-  │  │                                                                                │   │
-  │  │  CLIC Interface:                         Memory Interfaces:                    │   │
-  │  │  ┌─────────────────────────┐              ┌─────────────────────────┐          │   │
-  │  │  │ • interrupt_valid       │              │ • iBus (Instruction)    │          │   │
-  │  │  │ • interrupt_id[7:0]     │              │ • dBus (Data)           │          │   │
-  │  │  │ • interrupt_level[7:0]  │              │                         │          │   │
-  │  │  │ • interrupt_priv[1:0]   │              │ Cache: I$ 4KB, D$ 4KB   │          │   │
-  │  │  │ • mtvec_addr[31:0]      │              │ Width: 32-bit           │          │   │
-  │  │  │ • mtvec_mode[1:0]       │              └─────────────────────────┘          │   │
-  │  │  └─────────────────────────┘                                                   │   │
-  │  │                                                                                │   │
-  │  │  Additional CSRs:                                                              │   │
-  │  │  • mintthresh, mtvt, mnxti, mintstatus                                         │   │
-  │  │  • mscratchcsw, mnscratchcsw                                                   │   │
-  │  │                                                                                │   │
-  │  └────────────────────────────────────────────────────────────────────────────────┘   │
-  │                                        │                                              │
-  │                                        ▼                                              │
-  │  ┌────────────────────────────────────────────────────────────────────────────────┐   │
-  │  │                              Memory System                                     │   │
-  │  │                                                                                │   │
-  │  │  ┌─────────────────────┐              ┌─────────────────────────────────────┐  │   │
-  │  │  │   DRAM Bridges      │              │          Debug Interface            │  │   │
-  │  │  │                     │              │                                     │  │   │
-  │  │  │ • iBridge (64-bit)  │              │ • JTAG Debug Port                   │  │   │
-  │  │  │ • dBridge (64-bit)  │              │ • OpenOCD Support                   │  │   │
-  │  │  │                     │              │ • Hardware Breakpoints              │  │   │
-  │  │  └─────────────────────┘              └─────────────────────────────────────┘  │   │
-  │  └────────────────────────────────────────────────────────────────────────────────┘   │
-  │                                                                                       │
-  └───────────────────────────────────────────────────────────────────────────────────────┘
-
-
+<h2 id="architecture-diagram">Architecture Diagram</h2>
+<p>The following diagram illustrates the comprehensive interrupt handling architecture, showing how PLIC manages external interrupt sources while CLIC provides advanced local interrupt management for the CPU core.</p>
+<pre><code class="language-bash">
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                            Litex SOC with PLIC + CLIC                                │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                      │
+│  External Interrupt Sources                                                          │
+│  ┌─────────────────────────┐                                                         │
+│  │ interrupts[31:1]        │                                                         │
+│  │ • UART                  │                                                         │
+│  │ • GPIO                  │                                                         │
+│  │ • Ethernet              │                                                         │
+│  │ • DMA                   │                                                         │
+│  │ • ...                   │                                                         │
+│  └─────────────┬───────────┘                                                         │
+│                │                                                                     │
+│                ▼                                                                     │
+│  ┌───────────────────────────────────────────────────────────────────────────────┐   │
+│  │                              PLIC (Platform-Level Interrupt Controller)       │   │
+│  │  ┌─────────────┐    ┌─────────────────┐    ┌───────────────────────────────┐  │   │
+│  │  │   Gateway   │    │   Priority      │    │        Targets                │  │   │
+│  │  │   Logic     │    │   Arbitration   │    │  ┌──────────┬──────────────┐  │  │   │
+│  │  │             │    │                 │    │  │ Machine  │ Supervisor   │  │  │   │
+│  │  │ Edge Detect │───▶│ Tree-based      │───▶│  │ Mode     │ Mode         │  │  │   │
+│  │  │ &amp; Latching  │    │ Priority        │    │  │ Target   │ Target       │  │  │   │
+│  │  │             │    │ Selection       │    │  └────┬─────┴─────┬────────┘  │  │   │
+│  │  └─────────────┘    └─────────────────┘    └──────┼───────────┼────────────┘  │   │
+│  │                                                   │           │               │   │
+│  └───────────────────────────────────────────────────┼───────────┼───────────────┘   │
+│                                                      │           │                   │
+│                                                      │           │                   │
+│  Local Interrupt Sources:                            │           │                   │
+│  ┌─────────────────────────┐                         │           │                   │
+│  │ • Timer Compare         │                         │           │                   │
+│  │   (MTIMECMP vs MTIME)   │                         │           │                   │
+│  │ • Software Trigger      │                         │           │                   │
+│  │   (MSIP register)       │                         │           │                   │
+│  └─────────────┬───────────┘                         │           │                   │
+│                │                                     │           │                   │
+│                ▼                                     ▼           ▼                   │
+│  ┌───────────────────────────────────────────────────────────────────────────────┐   │
+│  │                              Riscv CPU Core                                   │   │
+│  │                                                                               │   │
+│  │  Interrupt Interfaces:                       Memory Interfaces:               │   │
+│  │  ┌─────────────────────────┐                ┌─────────────────────────┐       │   │
+│  │  │ PLIC:                   │                │ • iBus (Instruction)    │       │   │
+│  │  │ • Machine External      │                │ • dBus (Data)           │       │   │
+│  │  │ • Supervisor External   │                │                         │       │   │
+│  │  │                         │                │ Cache: I$ 4KB, D$ 4KB   │       │   │
+│  │  │ CLIC:                   │                │ Width: 32-bit           │       │   │
+│  │  │ • interrupt_valid       │                └─────────────────────────┘       │   │
+│  │  │ • interrupt_id[7:0]     │                                                  │   │
+│  │  │ • interrupt_level[7:0]  │                                                  │   │
+│  │  │ • interrupt_priv[1:0]   │                                                  │   │
+│  │  │ • mtvec_addr[31:0]      │                                                  │   │
+│  │  │ • mtvec_mode[1:0]       │                                                  │   │
+│  │  └─────────────────────────┘                                                  │   │
+│  │                                                                               │   │
+│  │  Additional CSRs:                                                             │   │
+│  │  • mintthresh, mtvt, mnxti, mintstatus                                        │   │
+│  │  • mscratchcsw, mnscratchcsw                                                  │   │
+│  │                                                                               │   │
+│  └───────────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
 </code></pre>
-<p>Key Interrupt Flow as shown in above daigram:</p>
-<ol>
-<li>External interrupts[31:1] → PLIC Gateway → Priority Arbitration → Target Selection</li>
-<li>PLIC outputs (Machine/Supervisor external) → CLIC External Inputs</li>
-<li>CLIC Timer/Software logic → CLIC Processing Engine</li>
-<li>CLIC combines all sources → Level comparison → Vectored delivery to CPU</li>
-<li>CPU receives unified interrupt interface with ID, level, privilege, and vector address</li>
-</ol>
 <p>Benefits of PLIC + CLIC Architecture:</p>
 <ul>
 <li>PLIC: System-wide external interrupt distribution and prioritization</li>
