@@ -5,7 +5,7 @@
 
   | Feature        | VexRiscv            | Minerva            | Ibex                  |
   |----------------|---------------------|--------------------|-----------------------|
-  | Implementation | Native in core      |Implemented natively| Native in core        |
+  | Implementation | Inbuilt Support     |Implemented natively| Inbuilt Support       |
 
 
 ## CPU CLIC Implementation
@@ -20,15 +20,24 @@
 
 ---
 
-### Vexriscv
+
+
+```
+┌───────────────┐
+│               │
+│   Vexriscv    │
+│               │
+└───────────────┘
+```
+
 
 ---
 
-#### CLINT 
+#### Vexriscv CLINT 
 
 Already supported.
 
-#### CLIC
+#### Vexriscv CLIC
 
 Implementation :
 [Add RISC-V CLIC to Vexriscv](https://github.com/disdi/VexRiscv) 
@@ -41,12 +50,19 @@ Features:
 
 ---
 
-### Minerva
+```
+┌───────────────┐
+│               │
+│   Minerva     │
+│               │
+└───────────────┘
+```
+
 ---
 
 Implementation : [Add RISC-V CLIC to Minerva](https://github.com/disdi/pythondata-cpu-minerva) 
 
-#### CLINT
+#### Minerva CLINT
 
 Features:
 
@@ -55,7 +71,7 @@ Features:
   3. Designed to work with external CLINT or use internal MTIMER
 
 
-#### CLIC
+#### Minerva CLIC
 
 Features:
 
@@ -65,14 +81,21 @@ Features:
 
 ---
 
-### Ibex
+```
+┌───────────────┐
+│               │
+│   Ibex        │
+│               │
+└───────────────┘
+```
+
 ---
 
-#### CLINT 
+#### Ibex CLINT 
 
 Already supported.
 
-#### CLIC
+#### Ibex CLIC
 
 Implementation : [Add RISC-V CLIC to IBEX](https://github.com/disdi/pythondata-cpu-ibex) 
 
