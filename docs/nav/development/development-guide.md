@@ -1,11 +1,18 @@
 # Milestones
 
-## Implementation
+## CPU Implementation
+
+For detailed information about implementing the CLINT/CLIC interface in a RISC-V CPU, see the [CPU Implementation Guide](cpu-implementation-guide.md).
+
+## Litex Implementation
 
 [PR #2260: Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
 
+---
 
 ### Hardware Changes
+
+---
 
 There are two Interrupt Controller Implementations that have been added to Litex SOC framework which enables LiteX-based RISC-V SoCs to choose between CLINT and CLIC.
 
@@ -89,9 +96,11 @@ An advanced interrupt controller that provides enhanced features for real-time a
     - CLIC instantiation for compatible CPUs.
 
 
-
+---
 
 ### Software Changes
+
+---
 
 The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RISC-V SoCs can be accessed via software.
 
@@ -117,3 +126,5 @@ The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RI
     - Highlights advanced interrupt capabilities of the CLIC.
     - Includes tests for priority-based preemption, interrupt thresholding, and edge/level-triggered modes.
     - Serves as a detailed example of using the CLIC C API effectively.
+
+---
