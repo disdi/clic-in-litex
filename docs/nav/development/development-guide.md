@@ -6,7 +6,11 @@ For detailed information about implementing the CLINT/CLIC interface in a RISC-V
 
 ## Litex Implementation
 
-[PR #2260: Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
+[PR-2260: Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
+
+## Zephyr Implementation
+
+[PR-94853: Add Litex CLIC support to Zephyr](https://github.com/zephyrproject-rtos/zephyr/pull/94853) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) for LiteX SoC framework in Zephyr RTOS.
 
 ---
 
