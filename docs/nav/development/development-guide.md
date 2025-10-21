@@ -108,7 +108,7 @@ An advanced interrupt controller that provides enhanced features for real-time a
 
 The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RISC-V SoCs can be accessed via software.
 
-### CLINT Software Integration in Litex
+#### CLINT Software Integration in Litex
 
 1. **Software Driver** (`.../irq.h`, `.../clint.h`):
     - Provides generic Interrupt Service Routines (ISRs) for handling timer and software interrupts.
@@ -118,7 +118,7 @@ The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RI
     - Demonstrates triggering and handling software interrupts using the CLINT.
     - Offers a practical example of utilizing the CLINT C API.
 
-### CLIC Software Integration in Litex
+#### CLIC Software Integration in Litex
 
 1. **Software Driver** (`.../irq.h`, `.../clic.h`):
     - Implements generic ISRs for managing prioritized external interrupts.
@@ -130,5 +130,57 @@ The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RI
     - Highlights advanced interrupt capabilities of the CLIC.
     - Includes tests for priority-based preemption, interrupt thresholding, and edge/level-triggered modes.
     - Serves as a detailed example of using the CLIC C API effectively.
+
+---
+
+## Linux Implementation
+
+---
+
+### Hardware Changes
+
+---
+
+VexRiscv-SMP Litex SOC which is capable of booting Linux already supports CLINT Interrupt Controller.
+CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Request:
+
+
+- [Adding CLIC support to VexRiscv SMP CPU](https://github.com/litex-hub/linux-on-litex-vexriscv/pull/438).
+- [Adding CLIC support to Linux-on-LiteX SoC](https://github.com/litex-hub/pythondata-cpu-vexriscv_smp/pull/10).
+
+#### Summary of Changes:
+
+1. ##### VexRiscv SMP CPU Core
+
+    - **`VexRiscv/src/main/scala/vexriscv/demo/smp/VexRiscvSmpLitexCluster.scala`**
+        - Added command-line option `--with-clic`
+        - Modified CSR configuration to use `CsrPluginConfig.withClic()` when enabled
+
+2. ##### Litex SOC with VexRiscv SMP CPU Core
+
+    - **`litex/litex/soc/cores/cpu/vexriscv_smp/core.py`**
+        - Added CLIC support detection and signal creation
+        - Added `--with-clic` command-line argument to pass it to Verilog generator
+
+3. ##### Linux-on-LiteX Integration
+
+    - **`linux-on-litex-vexriscv/sim.py`**
+        - Sets `VexRiscvSMP.with_clic = True` before SoC creation
+        - Adds CLIC controller to simulated SoC when `--with-clic` is specified
+
+    - **`linux-on-litex-vexriscv/make.py`**
+        - Similar CLIC integration for hardware builds
+        - Validates CPU has CLIC support before adding controller
+
+---
+
+### Software Changes
+
+---
+
+#### CLIC Software Integration in Linux
+
+1. Kernel Driver - *PENDING*
+2. Device Tree - *PENDING*
 
 ---
