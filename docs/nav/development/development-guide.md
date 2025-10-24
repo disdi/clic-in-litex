@@ -147,6 +147,7 @@ CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Req
 
 - [Adding CLIC support to VexRiscv SMP CPU](https://github.com/litex-hub/linux-on-litex-vexriscv/pull/438).
 - [Adding CLIC support to Linux-on-LiteX SoC](https://github.com/litex-hub/pythondata-cpu-vexriscv_smp/pull/10).
+- [Adding CLIC support to RISCV Opensbi](https://github.com/litex-hub/opensbi/pull/2)
 
 #### Summary of Changes:
 
@@ -178,9 +179,13 @@ CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Req
 
 ---
 
-#### CLIC Software Integration in Linux
+1. ##### CLIC Software Integration in Opensbi
 
-1. Kernel Driver - *PENDING*
-2. Device Tree - *PENDING*
+    - **`opensbi/platform/litex/vexriscv/platform.c`**
+        - Added CLIC support detection and handling interrupts
+
+2. Kernel Driver - *PENDING*
+
+3. Device Tree - *PENDING*
 
 ---
