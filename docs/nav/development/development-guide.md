@@ -6,11 +6,11 @@ For detailed information about implementing the CLINT/CLIC interface in a RISC-V
 
 ## Litex Implementation
 
-[PR-2260: Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
+[Add RISC-V CLIC and CLINT interrupt controller support](https://github.com/enjoy-digital/litex/pull/2260) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) and the CLINT (Core Local Interruptor) in the LiteX SoC framework.
 
 ## Zephyr Implementation
 
-[PR-94853: Add Litex CLIC support to Zephyr](https://github.com/zephyrproject-rtos/zephyr/pull/94853) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) for LiteX SoC framework in Zephyr RTOS.
+[Add Litex CLIC support to Zephyr](https://github.com/zephyrproject-rtos/zephyr/pull/94853) has been posted to support for the RISC-V Core Local Interrupt Controller (CLIC) for LiteX SoC framework in Zephyr RTOS.
 
 ---
 
@@ -135,12 +135,6 @@ The CLINT/CLIC Interrupt Controller Implementations if enabled in LiteX-based RI
 
 ## Linux Implementation
 
----
-
-### Hardware Changes
-
----
-
 VexRiscv-SMP Litex SOC which is capable of booting Linux already supports CLINT Interrupt Controller.
 CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Request:
 
@@ -148,6 +142,13 @@ CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Req
 - [Adding CLIC support to VexRiscv SMP CPU](https://github.com/litex-hub/linux-on-litex-vexriscv/pull/438).
 - [Adding CLIC support to Linux-on-LiteX SoC](https://github.com/litex-hub/pythondata-cpu-vexriscv_smp/pull/10).
 - [Adding CLIC support to RISCV Opensbi](https://github.com/litex-hub/opensbi/pull/2)
+
+
+---
+
+### Hardware Changes
+
+---
 
 #### Summary of Changes:
 
@@ -179,13 +180,30 @@ CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Req
 
 ---
 
+#### Summary of Changes:
+
 1. ##### CLIC Software Integration in Opensbi
 
     - **`opensbi/platform/litex/vexriscv/platform.c`**
         - Added CLIC support detection and handling interrupts
 
-2. Kernel Driver - *PENDING*
+2. ##### CLIC Node Generation in Device Tree
 
-3. Device Tree - *PENDING*
+    - **`/home/saksinh/fpga/litex/litex/soc/cores/cpu/vexriscv_smp/core.py`**
+        - Added `clic_base = 0xf200_0000`
+        - Updated `mem_map` property to include CLIC when enabled
+
+    - **`/home/saksinh/fpga/litex/litex/soc/integration/soc.py`**
+        - Modified `add_clic()` to add CLIC memory region to bus
+        - Added `self.bus.add_region("clic", SoCRegion(...))` for proper device tree generation
+
+    - **`/home/saksinh/fpga/litex/litex/soc/integration/soc_core.py`**
+        - Updated CLIC initialization to use CPU's CLIC base address from memory map
+
+    - **`/home/saksinh/fpga/litex/litex/tools/litex_json2dts_linux.py`**
+        - Added complete CLIC device tree generation support
+        - Updated interrupt parent references to use CLIC when available
+
+3. Kernel Driver - *PENDING*
 
 ---
