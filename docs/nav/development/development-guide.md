@@ -189,21 +189,123 @@ CLIC implementation has been added to VexRiscv-SMP Litex SOC with below Pull-Req
 
 2. ##### CLIC Node Generation in Device Tree
 
-    - **`/home/saksinh/fpga/litex/litex/soc/cores/cpu/vexriscv_smp/core.py`**
+    - **`litex/litex/soc/cores/cpu/vexriscv_smp/core.py`**
         - Added `clic_base = 0xf200_0000`
         - Updated `mem_map` property to include CLIC when enabled
 
-    - **`/home/saksinh/fpga/litex/litex/soc/integration/soc.py`**
+    - **`litex/litex/soc/integration/soc.py`**
         - Modified `add_clic()` to add CLIC memory region to bus
         - Added `self.bus.add_region("clic", SoCRegion(...))` for proper device tree generation
 
-    - **`/home/saksinh/fpga/litex/litex/soc/integration/soc_core.py`**
+    - **`litex/litex/soc/integration/soc_core.py`**
         - Updated CLIC initialization to use CPU's CLIC base address from memory map
 
-    - **`/home/saksinh/fpga/litex/litex/tools/litex_json2dts_linux.py`**
+    - **`litex/litex/tools/litex_json2dts_linux.py`**
         - Added complete CLIC device tree generation support
         - Updated interrupt parent references to use CLIC when available
 
 3. Kernel Driver - *PENDING*
 
 ---
+
+### Testing
+
+---
+
+#### Summary of Changes:
+
+###### LiteX-Generated CLIC DUT Test Framework
+
+A complete cocotb test framework for CLIC using LiteX-generated DUT has been created :
+
+- [CLIC Cocotb Test Framework](https://github.com/disdi/cocotbext-clic)
+
+##### Components Created
+
+###### 1. LiteX DUT Generator (`wrappers/generate_clic.py`)
+- **Purpose**: Generates CLIC hardware using LiteX framework
+- **Features**:
+  - Full CLIC implementation from `litex.soc.cores.clic`
+  - Wishbone slave interface for CSR access
+  - Configurable number of interrupts (default: 16)
+  - Proper CSR memory mapping at 0xf0c00000
+  - Complete interrupt signaling interface
+
+###### 2. Generated Files
+- **`build_clic/gateware/dut.v`**: Complete CLIC Verilog implementation (~106KB)
+- **`csr_clic.csv`**: CSR register map with all CLIC registers
+- **`tb_clic_litex.v`**: Testbench wrapper for cocotb compatibility
+
+###### 3. Test Infrastructure
+- **`test_clic_litex.py`**: Main test suite with 7 test functions
+- **`tests/test_clic_litex_basic.py`**: Basic functionality tests
+- **`tests/test_clic_litex_priority.py`**: Priority arbitration tests  
+- **`tests/test_clic_litex_csr.py`**: CSR access tests
+- **`tests/test_clic_litex_performance.py`**: Performance measurement tests
+
+##### How It Works
+
+###### LiteX Generation Process
+```python
+# The generate_clic.py script:
+1. Creates a CLICTestSoC with CLIC module
+2. Maps CSR registers at 0xf0c00000
+3. Connects wishbone interface
+4. Wires CLIC interrupt signals
+5. Generates synthesizable Verilog
+```
+
+###### Test Flow
+```python
+1. Generate DUT: python3 wrappers/generate_clic.py
+2. Compile: pytest test_clic_litex.py::test_compile_litex_clic
+3. Test: pytest test_clic_litex.py::test_litex_clic_basic
+```
+
+##### Test Coverage
+
+###### Functional Tests
+
+✅ **Compilation**: Successful
+
+✅ **Basic Test**: Interrupt generation and acknowledgment
+
+✅ **Individual Interrupts**: Parameterized testing (0-3)
+
+✅ **CSR Access**: Wishbone register read/write
+
+✅ **Priority Arbitration**: Multi-interrupt priority handling
+
+###### Performance Tests
+
+✅ **Interrupt Latency**: <100ns average requirement
+
+✅ **Interrupt Throughput**: Interrupts per second measurement
+
+✅ **Priority Switch Time**: <50ns average requirement  
+
+✅ **Acknowledgment Time**: <30ns average requirement
+
+---
+
+## CLIC Integration with Full System
+
+---
+
+LiteX-generated CLIC can be integrated into a complete SoC:
+
+```python
+from litex.soc.cores.clic import CLIC
+
+class MySoC(SoCCore):
+    def __init__(self):
+        # Add CLIC to your SoC
+        self.submodules.clic = CLIC(num_interrupts=64)
+        self.clic.add_csr_interface(self)
+        
+        # Connect to CPU
+        self.cpu.clicInterrupt.eq(self.clic.clicInterrupt[0])
+        # ... other connections
+```
+
+
