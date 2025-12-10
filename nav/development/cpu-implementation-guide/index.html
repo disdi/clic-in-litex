@@ -1,0 +1,1051 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <link rel="canonical" href="https://saketsinha.de/clic-in-litex/nav/development/cpu-implementation-guide/">
+      
+      
+      <link rel="shortcut icon" href="../../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-5.5.12">
+    
+    
+      
+        <title>Riscv Interrupt Controller - Real Time Litex Extension</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4dd2dd8d.min.css">
+      
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#riscv-interrupt-controller" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://saketsinha.de/clic-in-litex/" title="Real Time Litex Extension" class="md-header-nav__button md-logo" aria-label="Real Time Litex Extension">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Real Time Litex Extension
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Riscv Interrupt Controller
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/disdi/clic-in-litex" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    disdi/clic-in-litex
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://saketsinha.de/clic-in-litex/" title="Real Time Litex Extension" class="md-nav__button md-logo" aria-label="Real Time Litex Extension">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    Real Time Litex Extension
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/disdi/clic-in-litex" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    disdi/clic-in-litex
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../getting-started/" title="Getting Started" class="md-nav__link">
+      Getting Started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Architecture
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Architecture" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Architecture
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../architecture/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Development
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Development" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Development
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../development-guide/" title="Milestones" class="md-nav__link">
+      Milestones
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Riscv Interrupt Controller
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" title="Riscv Interrupt Controller" class="md-nav__link md-nav__link--active">
+      Riscv Interrupt Controller
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-clint-implementation" class="md-nav__link">
+    CPU CLINT Implementation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-clic-implementation" class="md-nav__link">
+    CPU CLIC Implementation
+  </a>
+  
+    <nav class="md-nav" aria-label="CPU CLIC Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vexriscv-clint" class="md-nav__link">
+    Vexriscv CLINT
+  </a>
+  
+    <nav class="md-nav" aria-label="Vexriscv CLINT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clint-tests-clint_democ" class="md-nav__link">
+    CLINT Tests (clint_demo.c)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vexriscv-clic" class="md-nav__link">
+    Vexriscv CLIC
+  </a>
+  
+    <nav class="md-nav" aria-label="Vexriscv CLIC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clic-tests-clic_democ" class="md-nav__link">
+    CLIC Tests (clic_demo.c)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minerva-clint" class="md-nav__link">
+    Minerva CLINT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minerva-clic" class="md-nav__link">
+    Minerva CLIC
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibex-clint" class="md-nav__link">
+    Ibex CLINT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibex-clic" class="md-nav__link">
+    Ibex CLIC
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-clint-implementation" class="md-nav__link">
+    CPU CLINT Implementation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-clic-implementation" class="md-nav__link">
+    CPU CLIC Implementation
+  </a>
+  
+    <nav class="md-nav" aria-label="CPU CLIC Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vexriscv-clint" class="md-nav__link">
+    Vexriscv CLINT
+  </a>
+  
+    <nav class="md-nav" aria-label="Vexriscv CLINT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clint-tests-clint_democ" class="md-nav__link">
+    CLINT Tests (clint_demo.c)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vexriscv-clic" class="md-nav__link">
+    Vexriscv CLIC
+  </a>
+  
+    <nav class="md-nav" aria-label="Vexriscv CLIC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clic-tests-clic_democ" class="md-nav__link">
+    CLIC Tests (clic_demo.c)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minerva-clint" class="md-nav__link">
+    Minerva CLINT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minerva-clic" class="md-nav__link">
+    Minerva CLIC
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibex-clint" class="md-nav__link">
+    Ibex CLINT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibex-clic" class="md-nav__link">
+    Ibex CLIC
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/disdi/clic-in-litex/edit/master/docs/nav/development/cpu-implementation-guide.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="riscv-interrupt-controller">Riscv Interrupt Controller</h1>
+<h2 id="cpu-clint-implementation">CPU CLINT Implementation</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>VexRiscv</th>
+<th>Minerva</th>
+<th>Ibex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implementation</td>
+<td>Inbuilt Support</td>
+<td>Implemented natively</td>
+<td>Inbuilt Support</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cpu-clic-implementation">CPU CLIC Implementation</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>VexRiscv</th>
+<th>Minerva</th>
+<th>Ibex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implementation</td>
+<td>Plugin-based</td>
+<td>Implemented natively</td>
+<td>External wrapper</td>
+</tr>
+<tr>
+<td>Configuration</td>
+<td>Compile-time option</td>
+<td>Always present</td>
+<td>Added post-generation</td>
+</tr>
+<tr>
+<td>Vectored mode</td>
+<td>Configurable</td>
+<td>Not visible</td>
+<td>Not supported</td>
+</tr>
+<tr>
+<td>Generation</td>
+<td>SpinalHDL → Verilog</td>
+<td>Amaranth → Verilog</td>
+<td>Direct SystemVerilog</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<pre><code>┌───────────────┐
+│               │
+│   Vexriscv    │
+│               │
+└───────────────┘
+</code></pre>
+<hr />
+<h4 id="vexriscv-clint">Vexriscv CLINT</h4>
+<p>CLINT handling is already supported from before inside Vexriscv CPU. 
+Below tests show CLINT fully functional on Vexricv.</p>
+<h5 id="clint-tests-clint_democ">CLINT Tests (<code>clint_demo.c</code>)</h5>
+<p>It contains several tests that trigger and handle software interrupts.  Below logs show the result of running clint_demo on Vexriscv Litex Soc:</p>
+<pre><code class="language-bash">
+LiteX minimal demo app built Jul 18 2025 14:18:51
+
+
+Available commands:
+
+help               - Show this command
+
+reboot             - Reboot CPU
+
+donut              - Spinning Donut demo
+
+helloc             - Hello C
+
+clint              - CLINT software interrupt demo
+
+litex-demo-app&gt; CLINT demo...
+
+CLINT base address: 0xf0000000
+
+CLINT initialized for software interrupts
+
+
+=== Testing CLINT-&gt;CPU connection ===
+
+Software interrupt handled! Count: 1
+
+Test FAILED: MIP.MSIP does not respond to CLINT MSIP
+
+This indicates CLINT is not properly connected to CPU
+
+
+=== CSR Manipulation Test ===
+
+Test PASSED: MIP.MSIP is read-only as expected
+
+
+=== Memory barrier Test ===
+
+Software interrupt handled! Count: 2
+
+Test FAILED: MIP.MSIP does not respond correctly to MSIP changes
+
+
+=== Basic Software Interrupt test ===
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 3
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 4
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 5
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 6
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 7
+
+Total interrupts handled: 7
+
+
+=== Interrupt Enable/Disable test ===
+
+Good: Interrupt was not handled while disabled
+
+Triggering software interrupt...
+
+Software interrupt handled! Count: 8
+
+Good: Interrupt was handled after re-enabling
+
+
+==== CLINT Demo Complete ====
+</code></pre>
+<h4 id="vexriscv-clic">Vexriscv CLIC</h4>
+<p>CLIC handling is being inside Vexriscv CPU with below Implementation:</p>
+<ul>
+<li><a href="https://github.com/disdi/VexRiscv">Add RISC-V CLIC to Vexriscv</a> </li>
+<li><a href="https://github.com/disdi/pythondata-cpu-vexriscv">Add RISC-V CLIC to Vexriscv Configuration</a></li>
+</ul>
+<p>Features:</p>
+<ol>
+<li>Plugin based : CSR Plugin has been extended to support CLIC.</li>
+<li>Configuration based: CLIC implentation can be intergrated in any configuration.</li>
+</ol>
+<h5 id="clic-tests-clic_democ">CLIC Tests (<code>clic_demo.c</code>)</h5>
+<p>It contains several tests that interrupt enable/disable, priority configuration, and attribute settings. Below logs show the result of running clic_demo on Vexriscv Litex Soc:</p>
+<pre><code class="language-bash">
+LiteX minimal demo app built Jul 18 2025 12:18:28
+
+
+Available commands:
+
+help               - Show this command
+
+reboot             - Reboot CPU
+
+donut              - Spinning Donut demo
+
+helloc             - Hello C
+
+clic               - CLIC interrupt controller demo
+
+litex-demo-app&gt; CLIC demo...
+
+
+Initializing CLIC...
+
+CLIC initialized
+
+
+=== CLIC CSR Access Test ===
+
+CSR_BASE: 0xf0000000
+
+CSR_CLIC_BASE: 0xf0000000
+
+
+Testing interrupt 0 CSRs:
+
+CLICINTIE0 addr: 0xf0000000
+
+CLICINTIP0 addr: 0xf0000004
+
+CLICIPRIO0 addr: 0xf0000008
+
+CLICINTATTR0 addr: 0xf000000c
+
+Wrote 1 to CLICINTIE0
+
+Read back CLICINTIE0: 1
+
+Configured interrupt 0: priority=128, edge triggered
+
+
+Triggering interrupt 0...
+
+CLICINTIP0 after trigger: 1
+
+CLICINTIP0 after clear: 0
+
+
+=== Simple CLIC Test ===
+
+CSR_BASE: 0xf0000000
+
+CSR_CLIC_BASE: 0xf0000000
+
+
+Configuring interrupt 1...
+
+Global interrupts enabled
+
+
+Test 1: Triggering interrupt 1 via CSR write...
+
+FAILED: Interrupt was not handled
+
+
+Test 2: Testing pending bit read/write...
+
+After setting: pending = 1
+
+After clearing: pending = 0
+
+
+Test 3: Reading configuration CSRs...
+
+CLICINTIE1: 1
+
+CLICIPRIO1: 128
+
+CLICINTATTR1: 0x01
+
+
+Simple CLIC test complete
+
+
+=== Basic Interrupt Functionality ===
+
+
+Configuring IRQ 1 with priority 128...
+
+Triggering IRQ 1...
+
+✗ IRQ 1 was not handled!
+
+
+Configuring IRQ 3 with priority 128...
+
+Triggering IRQ 3...
+
+✗ IRQ 3 was not handled!
+
+
+Configuring IRQ 5 with priority 128...
+
+Triggering IRQ 5...
+
+✗ IRQ 5 was not handled!
+
+
+Configuring IRQ 7 with priority 128...
+
+Triggering IRQ 7...
+
+✗ IRQ 7 was not handled!
+
+
+Configuring IRQ 9 with priority 128...
+
+Triggering IRQ 9...
+
+✗ IRQ 9 was not handled!
+
+
+=== Priority-based Preemption ===
+
+Triggering both interrupts simultaneously...
+
+Results:
+
+  Low priority IRQ 2: count=0
+
+  High priority IRQ 4: count=0
+
+
+=== Interrupt Threshold ===
+
+
+Setting threshold to 100...
+
+Results with threshold=100:
+
+  IRQ 10 (priority=50): count=0 ✓ (allowed)
+
+  IRQ 11 (priority=128): count=0 ✗ (blocked)
+
+  IRQ 12 (priority=200): count=0 ✗ (blocked)
+
+
+=== Test 4: Edge vs Level Triggering ===
+
+
+Configuring IRQ 15 as edge-triggered...
+
+Configuring IRQ 16 as level-triggered...
+
+
+Testing edge-triggered interrupt...
+
+  Edge IRQ 15: count=0 (should be 1)
+
+
+Testing level-triggered interrupt...
+
+  Level IRQ 16: count=0
+
+
+=== Interrupt Latency Measurement ===
+
+Measuring interrupt latency over 10 iterations...
+
+  Iteration 1: TIMEOUT
+
+  Iteration 2: TIMEOUT
+
+  Iteration 3: TIMEOUT
+
+  Iteration 4: TIMEOUT
+
+  Iteration 5: TIMEOUT
+
+  Iteration 6: TIMEOUT
+
+  Iteration 7: TIMEOUT
+
+  Iteration 8: TIMEOUT
+
+  Iteration 9: TIMEOUT
+
+  Iteration 10: TIMEOUT
+
+
+=== Multiple Simultaneous Interrupts ===
+
+Configured IRQ 25 with priority 50
+
+Configured IRQ 26 with priority 80
+
+Configured IRQ 27 with priority 110
+
+Configured IRQ 28 with priority 140
+
+Configured IRQ 29 with priority 170
+
+
+Triggering all 5 interrupts simultaneously...
+
+
+Results:
+
+  IRQ 25: handled 0 times
+
+  IRQ 26: handled 0 times
+
+  IRQ 27: handled 0 times
+
+  IRQ 28: handled 0 times
+
+  IRQ 29: handled 0 times
+
+
+Clic tests finished
+</code></pre>
+<p>Test Results Analysis :</p>
+<ol>
+<li>CLIC Module Works Correctly: The CLIC is properly generating interrupt signals when we trigger them via CSR writes</li>
+<li>Signals Don't Match CPU Expectations: VexRiscv expects standard external interrupts on its 32-bit interrupt array, but CLIC provides vectored interrupts with ID and priority</li>
+<li>No Interrupt Handler Entry: The CPU never enters the interrupt handler</li>
+</ol>
+<hr />
+<pre><code>┌───────────────┐
+│               │
+│   Minerva     │
+│               │
+└───────────────┘
+</code></pre>
+<hr />
+<p>Implementation : <a href="https://github.com/disdi/pythondata-cpu-minerva">Add RISC-V CLIC to Minerva</a> </p>
+<h4 id="minerva-clint">Minerva CLINT</h4>
+<p>Features:</p>
+<ol>
+<li>Built-in MTIMER unit (optional) implementing timer functionality</li>
+<li>Software interrupts via external signals only</li>
+<li>Designed to work with external CLINT or use internal MTIMER</li>
+</ol>
+<h4 id="minerva-clic">Minerva CLIC</h4>
+<p>Features:</p>
+<ol>
+<li>Exception Handling: CLIC is treated as a special interrupt type with its own cause code</li>
+<li>No Threshold Support: Unlike the full CLIC spec, Minerva doesn't implement threshold-based filtering</li>
+</ol>
+<hr />
+<pre><code>┌───────────────┐
+│               │
+│   Ibex        │
+│               │
+└───────────────┘
+</code></pre>
+<hr />
+<h4 id="ibex-clint">Ibex CLINT</h4>
+<p>Already supported.</p>
+<h4 id="ibex-clic">Ibex CLIC</h4>
+<p>Implementation : <a href="https://github.com/disdi/pythondata-cpu-ibex">Add RISC-V CLIC to IBEX</a> </p>
+<p>Features:</p>
+<ol>
+<li>Simple mapping : CLIC interrupts are mapped to the 15 fast interrupt lines using the lower 4 bits of the CLIC ID</li>
+<li>Priority handling: Basic threshold comparison for interrupt filtering</li>
+<li>Claim generation: Generates claim pulse when interrupt transitions from pending to cleared</li>
+</ol>
+<hr />
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../development-guide/" title="Milestones" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Milestones
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            saket sinha
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.3636a4ec.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.5eca75d3.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="../../../assets/custom.js"></script>
+      
+    
+  </body>
+</html>
