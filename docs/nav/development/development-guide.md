@@ -278,13 +278,13 @@ A complete cocotb test framework for CLIC using LiteX-generated DUT has been cre
 
 ###### Performance Tests
 
-✅ **Interrupt Latency**: <100ns average requirement
+✅ **Interrupt Latency**: Time required to handle interrupts
 
 ✅ **Interrupt Throughput**: Interrupts per second measurement
 
-✅ **Priority Switch Time**: <50ns average requirement  
+✅ **Priority Switch Time**: Time required to switch between interrupts   
 
-✅ **Acknowledgment Time**: <30ns average requirement
+✅ **Acknowledgment Time**: Time required to acknowledge an interrupt
 
 ---
 
